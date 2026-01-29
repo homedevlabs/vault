@@ -42,10 +42,13 @@ spec:
                   # Espera o unseal e o token estar disponível
                   if [ -n "$VAULT_TOKEN" ] && vault status -format=json | grep -q '"sealed":false'; then
                     echo "Vault unsealed. Authenticating..."
+                    # Configura Engines de Segredos
+                    vault secrets enable -path=secret kv-v2 || true
+                    
                     # Configura GitHub
                     vault auth enable github || true
                     vault write auth/github/config organization=homedevlabs
-                    vault write auth/github/map/teams/Default value=default,admin
+                    vault write auth/github/map/teams/Default value=default,admin-policy
                     
                     # Configura Time de Administradores
                     echo 'path "*" { capabilities = ["create", "read", "update", "delete", "list", "sudo"] }' | vault policy write admin-policy -
