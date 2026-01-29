@@ -1,28 +1,24 @@
 # Configuração customizada para o Vault Helm Chart em k8s/vault
 # Ref: https://github.com/hashicorp/vault-helm/blob/main/values.yaml
 
-server:
-  # Habilitar Ingress seguindo o padrão superlab.app
-  ingress:
-    enabled: true
-    hosts:
-      - host: vault.superlab.app
-        paths:
-          - path: /
-            pathType: Prefix
-    # Se você utiliza TLS/Cert-Manager, pode descomentar abaixo:
-    # tls:
-    #  - secretName: vault-tls
-    #    hosts:
-    #      - vault.superlab.app
+vault:
+  server:
+    # Habilitar Ingress seguindo o padrão superlab.app
+    ingress:
+      enabled: true
+      hosts:
+        - host: vault.superlab.app
+          paths:
+            - path: /
+              pathType: Prefix
 
-  dataStorage:
-    enabled: true
-    size: 10Gi
+    dataStorage:
+      enabled: true
+      size: 10Gi
 
-  standalone:
-    enabled: true
+    standalone:
+      enabled: true
 
-ui:
-  enabled: true
-  serviceType: ClusterIP
+  ui:
+    enabled: true
+    serviceType: ClusterIP
