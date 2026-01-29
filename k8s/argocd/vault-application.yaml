@@ -17,8 +17,8 @@ spec:
             hosts:
               - host: vault.superlab.app
                 paths:
-                  - path: /
-                    pathType: Prefix
+                  - /
+            pathType: Prefix
           dataStorage:
             enabled: true
             size: 10Gi
