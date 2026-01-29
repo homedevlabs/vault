@@ -6,9 +6,27 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/homedevlabs/vault.git
-    targetRevision: HEAD
-    path: k8s/vault
+    repoURL: https://helm.releases.hashicorp.com
+    chart: vault
+    targetRevision: 0.28.1
+    helm:
+      values: |
+        server:
+          ingress:
+            enabled: true
+            hosts:
+              - host: vault.superlab.app
+                paths:
+                  - path: /
+                    pathType: Prefix
+          dataStorage:
+            enabled: true
+            size: 10Gi
+          standalone:
+            enabled: true
+        ui:
+          enabled: true
+          serviceType: ClusterIP
   destination:
     server: https://kubernetes.default.svc
     namespace: vault
