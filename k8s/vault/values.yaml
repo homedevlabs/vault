@@ -5,10 +5,18 @@ server:
   # Habilitar Ingress seguindo o padrão superlab.app
   ingress:
     enabled: true
-    ingressClassName: nginx # Comum em clusters que usam o padrão do seu demo-app
+    # Removido nginx e configurado para o padrão que o Traefik costuma escutar (podendo ser branco se for o default ou 'traefik')
+    ingressClassName: traefik 
+    annotations:
+      # Adicionando anotação comum para Traefik se necessário, 
+      # ou mantendo limpo se o cluster já for configurado para tal.
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
     hosts:
       - host: vault.superlab.app
-        paths: []
+        paths:
+          - path: /
+            pathType: Prefix
     # Se você utiliza TLS/Cert-Manager, pode descomentar abaixo:
     # tls:
     #  - secretName: vault-tls
