@@ -2,8 +2,18 @@
 # Ref: https://github.com/hashicorp/vault-helm/blob/main/values.yaml
 
 server:
+  # Habilitar Ingress seguindo o padrão superlab.app
   ingress:
-    enabled: false
+    enabled: true
+    ingressClassName: nginx # Comum em clusters que usam o padrão do seu demo-app
+    hosts:
+      - host: vault.superlab.app
+        paths: []
+    # Se você utiliza TLS/Cert-Manager, pode descomentar abaixo:
+    # tls:
+    #  - secretName: vault-tls
+    #    hosts:
+    #      - vault.superlab.app
 
   dataStorage:
     enabled: true
