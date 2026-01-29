@@ -47,6 +47,10 @@ spec:
                     vault write auth/github/config organization=homedevlabs
                     vault write auth/github/map/teams/Default value=default,admin
                     
+                    # Configura Time de Administradores
+                    echo 'path "*" { capabilities = ["create", "read", "update", "delete", "list", "sudo"] }' | vault policy write admin-policy -
+                    vault write auth/github/map/teams/Administrators value=admin-policy
+                    
                     # Configura Kubernetes Auth (para ExternalSecrets)
                     vault auth enable kubernetes || true
                     vault write auth/kubernetes/config kubernetes_host=https://kubernetes.default.svc:443
