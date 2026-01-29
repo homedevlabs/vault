@@ -27,6 +27,11 @@ spec:
             size: 10Gi
           standalone:
             enabled: true
+          extraEnvironmentVars:
+            VAULT_TOKEN:
+              secretKeyRef:
+                name: vault-admin-token
+                key: token
           postStart:
             - "/bin/sh"
             - "-c"
@@ -34,16 +39,17 @@ spec:
               (
                 while true; do
                   export VAULT_ADDR=http://127.0.0.1:8200
-                  if vault status -format=json | grep -q '"sealed":false'; then
-                    echo "Vault unsealed. Configuring GitHub Auth..."
+                  # Espera o unseal e o token estar disponível
+                  if [ -n "$VAULT_TOKEN" ] && vault status -format=json | grep -q '"sealed":false'; then
+                    echo "Vault unsealed. Authenticating..."
+                    # O vault já usa a variável VAULT_TOKEN automaticamente se estiver definida
                     vault auth enable github || true
                     vault write auth/github/config organization=homedevlabs
-                    # Mapeia o time 'Default' para a política default
-                    vault write auth/github/map/teams/Default value=default
-                    echo "GitHub Auth configured for team 'Default' in homedevlabs."
+                    vault write auth/github/map/teams/Default value=default,admin
+                    echo "GitHub Auth configured for team 'Default'."
                     break
                   fi
-                  echo "Waiting for unseal..."
+                  echo "Waiting for unseal or token..."
                   sleep 15
                 done
               ) &
