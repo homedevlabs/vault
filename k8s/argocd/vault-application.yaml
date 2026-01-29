@@ -27,6 +27,24 @@ spec:
             size: 10Gi
           standalone:
             enabled: true
+          postStart:
+            - "/bin/sh"
+            - "-c"
+            - |
+              (
+                while true; do
+                  export VAULT_ADDR=http://127.0.0.1:8200
+                  if vault status -format=json | grep -q '"sealed":false'; then
+                    echo "Vault unsealed. Configuring GitHub Auth..."
+                    vault auth enable github || true
+                    vault write auth/github/config organization=homedevlabs
+                    echo "GitHub Auth configured."
+                    break
+                  fi
+                  echo "Waiting for unseal..."
+                  sleep 15
+                done
+              ) &
         injector:
           enabled: true
           # Dar permissão para o injector criar seus próprios certificados (secrets)
