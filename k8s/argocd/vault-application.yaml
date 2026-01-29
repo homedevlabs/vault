@@ -27,6 +27,13 @@ spec:
             size: 10Gi
           standalone:
             enabled: true
+        injector:
+          enabled: true
+          # Dar permissão para o injector criar seus próprios certificados (secrets)
+          extraRules:
+            - apiGroups: [""]
+              resources: ["secrets"]
+              verbs: ["get", "list", "watch", "create", "delete", "patch", "update"]
         ui:
           enabled: true
           serviceType: ClusterIP
