@@ -1,19 +1,16 @@
-# ADR 001: Deploy do HashiCorp Vault via ArgoCD
+# ADR 001: Deploy do HashiCorp Vault via ArgoCD (Revisado)
 
 ## Status
 Proposto
 
 ## Contexto
-O objetivo é automatizar o deploy do HashiCorp Vault em um cluster Kubernetes utilizando práticas de GitOps e o ArgoCD como ferramenta de sincronização.
+O usuário solicitou que a estrutura de deploy seja concentrada no subdiretório `k8s/` do repositório de vault, mantendo a compatibilidade com ArgoCD.
 
 ## Decisão
-Utilizaremos o Helm Chart oficial da HashiCorp (`https://helm.releases.hashicorp.com`) como a fonte da verdade para o deploy. O manifesto do ArgoCD `Application` apontará para este repositório Helm e utilizará um arquivo `values.yaml` customizado armazenado no repositório Git do projeto.
-
-Justificativa:
-1. **Padronização:** O Helm Chart oficial é mantido pela HashiCorp e segue as melhores práticas de segurança e configuração.
-2. **Manutenibilidade:** Facilita atualizações de versão do Vault alterando apenas o `targetRevision` no ArgoCD.
-3. **Customização:** Permite o uso de `values.yaml` para configurar as necessidades específicas do ambiente (ex: Ingress, persistência, modo HA).
+A estrutura de arquivos seguirá o padrão:
+- `k8s/argocd/`: Manifestos de Application do ArgoCD.
+- `k8s/vault/`: Chart Helm local que encapsula o Vault oficial como dependência.
 
 ## Consequências
-- A configuração do Vault (segredos, políticas) não é necessariamente gerenciada via ArgoCD (apenas o deploy da infraestrutura).
-- É necessário que o cluster Kubernetes tenha recursos suficientes para os pods do Vault e seus mecanismos de persistência (StorageClasses).
+- Organização mais limpa, evitando poluir a raiz do repositório.
+- Necessidade de atualizar referências de caminhos (path) no manifesto do ArgoCD.

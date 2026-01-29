@@ -1,6 +1,6 @@
 apiVersion: v2
 name: vault-deploy
-description: Helm chart to deploy HashiCorp Vault via GitOps
+description: Helm chart to deploy HashiCorp Vault via GitOps (Local k8s structure)
 type: application
 version: 0.1.0
 appVersion: "1.15.2"

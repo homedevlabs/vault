@@ -1,0 +1,17 @@
+# Configuração customizada para o Vault Helm Chart em k8s/vault
+# Ref: https://github.com/hashicorp/vault-helm/blob/main/values.yaml
+
+server:
+  ingress:
+    enabled: false
+
+  dataStorage:
+    enabled: true
+    size: 10Gi
+
+  standalone:
+    enabled: true
+
+ui:
+  enabled: true
+  serviceType: ClusterIP

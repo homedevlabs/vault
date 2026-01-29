@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/USER/vault-gitops.git # Placeholder - o usuário deve ajustar para seu repositório real
+    repoURL: https://github.com/USER/vault-gitops.git # Placeholder: Ajuste para o seu repositório Git
     targetRevision: HEAD
-    path: charts/vault
+    path: k8s/vault
   destination:
     server: https://kubernetes.default.svc
     namespace: vault
