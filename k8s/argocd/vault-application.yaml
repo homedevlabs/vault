@@ -42,11 +42,24 @@ spec:
                   # Espera o unseal e o token estar disponível
                   if [ -n "$VAULT_TOKEN" ] && vault status -format=json | grep -q '"sealed":false'; then
                     echo "Vault unsealed. Authenticating..."
-                    # O vault já usa a variável VAULT_TOKEN automaticamente se estiver definida
+                    # Configura GitHub
                     vault auth enable github || true
                     vault write auth/github/config organization=homedevlabs
                     vault write auth/github/map/teams/Default value=default,admin
-                    echo "GitHub Auth configured for team 'Default'."
+                    
+                    # Configura Kubernetes Auth (para ExternalSecrets)
+                    vault auth enable kubernetes || true
+                    vault write auth/kubernetes/config kubernetes_host=https://kubernetes.default.svc:443
+                    
+                    # Cria Política e Role para o Backstage
+                    echo 'path "secret/data/backstage/*" { capabilities = ["read"] }' | vault policy write backstage-policy -
+                    vault write auth/kubernetes/role/backstage-role \
+                        bound_service_account_names="*" \
+                        bound_service_account_namespaces="*" \
+                        policies=backstage-policy \
+                        ttl=24h
+                    
+                    echo "GitHub and Kubernetes Auth (backstage-role) configured."
                     break
                   fi
                   echo "Waiting for unseal or token..."
