@@ -38,9 +38,9 @@ spec:
                     echo "Vault unsealed. Configuring GitHub Auth..."
                     vault auth enable github || true
                     vault write auth/github/config organization=homedevlabs
-                    # Permite que qualquer membro da Org tenha acesso básico (usando o nome da org como time)
-                    vault write auth/github/map/teams/homedevlabs value=default
-                    echo "GitHub Auth configured for all members of homedevlabs."
+                    # Mapeia o time 'Default' para a política default
+                    vault write auth/github/map/teams/Default value=default
+                    echo "GitHub Auth configured for team 'Default' in homedevlabs."
                     break
                   fi
                   echo "Waiting for unseal..."
