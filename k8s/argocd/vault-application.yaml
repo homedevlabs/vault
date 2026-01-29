@@ -43,24 +43,24 @@ spec:
                   if [ -n "$VAULT_TOKEN" ] && vault status -format=json | grep -q '"sealed":false'; then
                     echo "Vault unsealed. Authenticating..."
                     # Configura Engines de Segredos
-                    vault secrets enable -path=secret kv-v2 || true
+                    /bin/vault secrets enable -path=secret kv-v2 || true
+                    
+                    # Cria Política Administrativa PRIMEIRO
+                    echo 'path "*" { capabilities = ["create", "read", "update", "delete", "list", "sudo"] }' | /bin/vault policy write admin-policy -
                     
                     # Configura GitHub
-                    vault auth enable github || true
-                    vault write auth/github/config organization=homedevlabs
-                    vault write auth/github/map/teams/Default value=default,admin-policy
-                    
-                    # Configura Time de Administradores
-                    echo 'path "*" { capabilities = ["create", "read", "update", "delete", "list", "sudo"] }' | vault policy write admin-policy -
-                    vault write auth/github/map/teams/Administrators value=admin-policy
+                    /bin/vault auth enable github || true
+                    /bin/vault write auth/github/config organization=homedevlabs
+                    /bin/vault write auth/github/map/teams/Default value=default,admin-policy
+                    /bin/vault write auth/github/map/teams/Administrators value=admin-policy
                     
                     # Configura Kubernetes Auth (para ExternalSecrets)
-                    vault auth enable kubernetes || true
-                    vault write auth/kubernetes/config kubernetes_host=https://kubernetes.default.svc:443
+                    /bin/vault auth enable kubernetes || true
+                    /bin/vault write auth/kubernetes/config kubernetes_host=https://kubernetes.default.svc:443
                     
                     # Cria Política e Role para o Backstage
-                    echo 'path "secret/data/backstage/*" { capabilities = ["read"] }' | vault policy write backstage-policy -
-                    vault write auth/kubernetes/role/backstage-role \
+                    echo 'path "secret/data/backstage/*" { capabilities = ["read"] }' | /bin/vault policy write backstage-policy -
+                    /bin/vault write auth/kubernetes/role/backstage-role \
                         bound_service_account_names="*" \
                         bound_service_account_namespaces="*" \
                         policies=backstage-policy \
